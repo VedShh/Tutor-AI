@@ -1,0 +1,17 @@
+langchain
+langchain_community
+langchain_openai
+openai
+langchain_core
+pypdf
+chromadb
+markdown
+guardrails-ai
+python-dotenv
+waitress
+setuptools 
+bs4
+pydantic
+python-dotenv
+gunicorn
+Flask

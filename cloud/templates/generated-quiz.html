@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Challenge</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #4CAF50, #007BFF);
+            color: #333;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 800px;
+            padding: 40px;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            position: relative;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .question {
+            margin-bottom: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .options {
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden; /* Prevent overflow */
+        }
+
+        .options button {
+            display: block;
+            width: 100%;
+            padding: 12px 20px;
+            margin: 8px 0;
+            font-size: 16px;
+            background-color: #f0f0f0;
+            color: #333;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            position: relative;
+            z-index: 2;
+        }
+
+
+        .options button:hover {
+            background-color: #007BFF;
+        }
+
+        .options button.correct {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .options button.incorrect {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .options button.disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* Override the disabled state for incorrect buttons */
+        .options button.incorrect.disabled {
+            background-color: #dc3545 !important;
+        }
+
+        .options button.correct.disabled {
+            background-color: #28a745 !important;
+        }
+
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 6px;
+            font-size: 16px;
+            text-align: left;
+        }
+
+        .correct {
+            background-color: #d1e7dd;
+            border: 1px solid #badbcc;
+            color: #0f5132;
+        }
+
+        .incorrect {
+            background-color: #f8d7da;
+            border: 1px solid #f5c2c7;
+            color: #842029;
+        }
+
+        .explanation {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 12px 20px;
+            font-size: 16px;
+            background-color: #007BFF;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            text-align: center;
+            transition: background-color 0.3s;
+            margin-top: 20px;
+        }
+
+        .back-button:hover {
+            background-color: #0056b3;
+        }
+       
+
+        .loading-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0%; /* Start with width of 0 */
+            height: 100%;
+            background: rgba(0, 0, 0, 0.1);
+            z-index: 1;
+            border-radius: 6px;
+            transition: width 1.5s ease-in-out;
+        }
+
+        @keyframes loading {
+            0% {
+                width: 0%;
+            }
+            100% {
+                width: 100%;
+            }
+        }
+        #nextButton {
+            display: inline-block;
+            padding: 12px 20px;
+            font-size: 16px;
+            background-color: #28a745;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            text-align: center;
+            transition: background-color 0.3s;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+
+        #nextButton:hover {
+            background-color: #218838;
+        }
+
+        #nextButton.disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        #backButton {
+            display: inline-block;
+            padding: 12px 20px;
+            font-size: 16px;
+            background-color: #17a2b8;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            text-align: center;
+            transition: background-color 0.3s;
+            margin-top: 20px;
+        }
+
+        #backButton:hover {
+            background-color: #117a8b;
+        }
+
+        #backButton.disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+    </style>
+
+</head>
+<body>
+    <div class="container">
+        <h1>Quiz Challenge</h1>
+
+        <!-- Question from the AI result -->
+        <div class="question" id="question"> </div>
+
+        <div class="options">
+            <!-- Add options dynamically, based on the AI result -->
+            <button class="option" data-value="{{ correct_answer }}"> </button>
+            <button class="option" data-value="Other Answer"> </button>
+            <button class="option" data-value="Another Answer"> </button>
+            <button class="option" data-value="Yet Another Answer"> </button>
+
+            <!-- Loading bar -->
+            <div id="loadingBar" class="loading-bar" style="display: none;"></div>
+        </div>
+
+        <div id="feedback" class="feedback" style="display: none;"></div>
+        <a href="#" id="nextButton" class="back-button">Next</a>
+        <a href="#" id="backButton" class="back-button disabled">Back</a>
+
+        <a href="/" class="back-button">Back to Home</a>
+    </div>
+
+    <script>
+        
+        document.addEventListener('DOMContentLoaded', () => {
+        const questionElement = document.getElementById('question');
+        const feedback = document.getElementById('feedback');
+        const options = document.querySelectorAll('.option');
+        const loadingBar = document.getElementById('loadingBar');
+        const nextButton = document.getElementById('nextButton');
+        const backButton = document.getElementById('backButton');
+        let selectedAnswer = null;
+        let currentQuestionIndex = 0;
+        let aiResults = [];
+
+        // Function to simulate loading (sets width)
+        function showLoadingBar() {
+            loadingBar.style.width = '100%'; // Start filling the bar
+        }
+
+        // Show loading bar while waiting for the data
+        loadingBar.style.display = 'block';
+
+        // Fetch the JSON file containing the data
+        fetch('/static/quiz-data.json')
+            .then(response => response.json())
+            .then(data => {
+                // Hide loading bar after content is fetched
+                setTimeout(() => {
+                    loadingBar.style.display = 'none';
+                }, 1500);  // Wait for the loading bar animation to complete
+
+                // Store the quiz data
+                aiResults = data;
+
+                // Load the first question
+                loadQuestion();
+            })
+            .catch(error => {
+                console.error('Error fetching JSON:', error);
+                loadingBar.style.display = 'none';  // Hide loading bar in case of error
+            });
+
+       // Function to shuffle an array (Fisher-Yates Shuffle)
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]]; // Swap elements
+            }
+        }
+
+
+        function loadQuestion() {
+            const aiResult = aiResults[currentQuestionIndex];
+
+            // Load question from JSON
+            questionElement.textContent = aiResult.question;
+
+            // Create an array of options and shuffle them
+            const optionsArray = aiResult.options.map(option => ({
+                text: option,
+                isCorrect: option === aiResult.correct_answer
+            }));
+
+            
+            // Shuffle the options array to randomize
+            shuffleArray(optionsArray);
+            
+            // Populate options dynamically from shuffled options array
+            options.forEach((option, index) => {
+                option.textContent = optionsArray[index].text;
+                option.setAttribute('data-value', optionsArray[index].text);
+                option.dataset.isCorrect = optionsArray[index].isCorrect;
+            });
+
+            // Reset feedback and selected answer
+            feedback.style.display = 'none';
+            options.forEach(option => {
+                option.classList.remove('selected', 'correct', 'incorrect', 'disabled');
+            });
+            selectedAnswer = null;
+
+            // Try to load stored answer from localStorage
+            const storedAnswer = localStorage.getItem(`question-${currentQuestionIndex}-answer`);
+            if (storedAnswer) {
+                options.forEach(option => {
+                    if (option.getAttribute('data-value') === storedAnswer) {
+                        option.classList.add('selected');
+                        selectedAnswer = option;
+                        option.classList.add('disabled');
+                        if (storedAnswer.toLowerCase() === aiResult.correct_answer.toLowerCase()) {
+                            option.classList.add('correct');
+                            feedback.className = 'feedback correct';
+                            feedback.innerHTML = `<p>Correct! 🎉</p><div class="explanation">${aiResult.explanation}</div>`;
+                            // Enable the "Next" button for correct answer
+                            nextButton.classList.remove('disabled');
+                            // Disable all options after selection
+                            options.forEach(opt => {
+                                opt.classList.add('disabled');
+                            });
+                        } else {
+                            option.classList.add('incorrect');
+                            option.classList.add('disabled');
+                            feedback.className = 'feedback incorrect';
+                            feedback.innerHTML = `<p>Incorrect. ❌</p><div class="explanation">${aiResult.explanation}</div>`;
+                            nextButton.classList.add('disabled');
+                        }
+                        feedback.style.display = 'block';
+                    }
+                });
+            } else {
+                // If there's no stored answer, make sure "Next" is disabled
+                nextButton.classList.add('disabled');
+            }
+            
+            // Handle option selection
+            options.forEach(option => {
+                option.addEventListener('click', () => {
+                    // Prevent click event if the option is disabled
+                    if (option.classList.contains('disabled')) {
+                        return; // Do nothing if the button is disabled
+                    }
+                    // If an answer is already selected, remove the color classes
+                    if (selectedAnswer) {
+                        selectedAnswer.classList.remove('correct', 'incorrect');
+                    }
+                    selectedAnswer = option;
+                    selectedAnswer.classList.add('selected');
+
+                    const userResponse = selectedAnswer.getAttribute('data-value').trim();
+
+                    // Check answer and apply feedback
+                    if (userResponse.toLowerCase() === aiResult.correct_answer.toLowerCase()) {
+                        selectedAnswer.classList.add('correct');
+                        feedback.className = 'feedback correct';
+                        feedback.innerHTML = `<p>Correct! 🎉</p><div class="explanation">${aiResult.explanation}</div>`;
+                        
+                        // Disable all options after selection
+                        options.forEach(opt => {
+                            opt.classList.add('disabled');
+                        });
+                        // Enable the "Next" button after correct answer
+                        nextButton.classList.remove('disabled');
+                    } else {
+                        selectedAnswer.classList.add('incorrect');
+                        feedback.className = 'feedback incorrect';
+                        feedback.innerHTML = `<p>Incorrect. ❌</p>`;
+                        //selectedAnswer.classList.add('disabled');
+                    }
+
+                    // Display feedback
+                    feedback.style.display = 'block';
+
+                    // Save selected answer in localStorage
+                    localStorage.setItem(`question-${currentQuestionIndex}-answer`, userResponse);
+                });
+            });
+
+            if (!(currentQuestionIndex < aiResults.length - 1)) {
+                nextButton.classList.add('disabled');
+            }
+
+            // Enable or disable the "Back" button based on the question index
+            if (currentQuestionIndex > 0) {
+                backButton.classList.remove('disabled');
+            } else {
+                backButton.classList.add('disabled');
+            }
+        }
+
+
+        // Handle "Next" button click
+        nextButton.addEventListener('click', (e) => {
+            e.preventDefault();
+
+            // If the "Next" button is not disabled, go to the next question
+            if (!nextButton.classList.contains('disabled')) {
+                currentQuestionIndex++;
+                if (currentQuestionIndex < aiResults.length) {
+                    loadQuestion();
+                }
+            }
+        });
+
+        // Handle "Back" button click
+        backButton.addEventListener('click', (e) => {
+            e.preventDefault();
+
+            // If the "Back" button is not disabled, go to the previous question
+            if (!backButton.classList.contains('disabled')) {
+                currentQuestionIndex--;
+                console.log("Current question index:", currentQuestionIndex);
+                if (currentQuestionIndex >= 0) {
+                    loadQuestion();
+                }
+            }
+        });
+    });
+
+    </script>
+</body>
+</html>

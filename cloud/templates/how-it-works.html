@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How Tutor AI Works</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #4CAF50, #007BFF);
+            color: #333;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 800px;
+            height: 100%;
+            padding: 40px;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        h2 {
+            color: #4CAF50;
+            margin-top: 20px;
+        }
+
+        p {
+            color: #555;
+            line-height: 1.3;
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 12px 20px;
+            font-size: 16px;
+            background-color: #007BFF;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            text-align: center;
+            transition: background-color 0.3s;
+            margin-top: 20px;
+        }
+
+        .back-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>How To Use</h1>
+        <h3>For all usages - Form Input Options:</h3>
+        <p>Textbook URL: You can input the URL of an online textbook for the AI to reference. (Must be a .pdf link -> example.com/hello.pdf)</p>
+        <p>File Upload: Alternatively, you can upload a PDF file containing study material by clicking the "Choose File" button.</p>
+        <h2>General Chatbot</h2>
+        <p>This is a general chatbot, where you can ask any questions about educational related content. There are two inputs here: 1. the textbook link/pdf, and 2. your question. The AI will understand your request and then write your answer in few seconds. Your inputs will be cleared after each response. Inside your question you can specifiy if you want the AI to answer your question a certain way. The more specified you are with your question the more specific annswer you will recieve from the AI. </p>
+        <h2>Customized Study Plan</h2>
+        <p>This is a custmoized study plan generator. It uses your data from other questions and creates a customized study plan that will highlight learning gaps, and try to reinforce those gaps in a schedule or advice that it gives. You can also prompt the bot to create the study plan in a specific way that better suits you. To actually generate the plan you can enter in some prompts or some topics you want to concentrate on, input the textbook like that you want to refer to and click generate. The AI will then generate you a customized study plan!</p>
+        <h2>Quiz</h2>
+        <p>This is a quiz generator that can simulate how multiple choice questions could appear on a test. To generate the 10 quiz questions you have to first enter in the topic that you want to be tested on and then the textbook where you want the main content to come from. Then the AI will generate 10 quetstions that will light up green/red whether you answer is correct or not. You must answer the quesion correctly to move on to the next.</p>
+        <h2>Summarizer</h2>
+        <p>This is a summarizer. After you enter in what pages or chapters or a certain section in the textbook, and enter in the textbook, the AI will generate a summary of whatver section you want. If needed, you can request for a notes/ flashcard type summary.</p>
+        <a href="/" class="back-button">Back to Home</a>
+    </div>
+    <br>
+    <div class="container">
+        <h1>How It Works</h1>
+
+        <h2>Frontend</h2>
+        <p>The Tutor AI system allows users to ask questions about a textbook, which is either uploaded as a file or linked via a URL. Users can input their questions into the provided text field. The question, along with the file or URL, is then sent to the server for processing.</p>
+        <p>The interface uses HTML forms for users to submit their data, and upon receiving a response, the answer is displayed on the page, allowing users to interact with the AI seamlessly. There is a cookie notice displayed to ensure the user's privacy is respected.</p>
+
+        <h2>Backend</h2>
+        <p>On the backend, the Tutor AI uses a Python Flask application that integrates with various libraries such as Langchain, OpenAI, and PyPDF. The system loads the provided textbook (PDF or URL), processes it into a searchable format, and allows for question-answering based on the context of the uploaded content.</p>
+        <p>The server uses OpenAI’s GPT-4o to analyze the content and generate concise responses to the user’s questions. The backend is responsible for handling file uploads, managing text extraction, and ensuring that the proper context is retrieved to answer the user's query accurately.</p>
+
+    </div>
+</body>
+</html>

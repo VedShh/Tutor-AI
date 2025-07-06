@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Study Plan</title>
+    <style>
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #4CAF50, #007BFF);
+            color: #333;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 600px;
+            padding: 30px;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+            font-size: 2rem;
+            color: #333;
+        }
+
+        p {
+            margin-bottom: 20px;
+            color: #555;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .input-group {
+            text-align: left;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 8px;
+            display: block;
+            color: #555;
+        }
+
+        input[type="text"],
+        textarea,
+        input[type="file"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 14px;
+            box-sizing: border-box;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        input:focus,
+        textarea:focus {
+            border-color: #007BFF;
+            box-shadow: 0 0 4px rgba(0, 123, 255, 0.3);
+            outline: none;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        button {
+            padding: 12px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        button[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        button[type="submit"]:disabled {
+            background-color: grey;
+            cursor: not-allowed;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            text-align: left;
+            color: #333;
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            p {
+                font-size: 0.9rem;
+            }
+
+            button {
+                font-size: 14px;
+                padding: 10px;
+            }
+        }
+        .back-button {
+            display: inline-block;
+            padding: 12px 20px;
+            font-size: 16px;
+            background-color: #007BFF;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            text-align: center;
+            transition: background-color 0.3s;
+            margin-top: 20px;
+        }
+
+        .back-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Custom Study Plan</h1>
+            <p>Create a personalized study plan to help you succeed!</p>
+        </header>
+        <section class="content">
+            <form action="/study-plan" method="POST" id = "studyPlan" enctype="multipart/form-data">
+                <div class="input-group">
+                    <label for="file">Upload a file for reference:</label>
+                    <input type="file" id="file" name="file">
+                </div>
+
+                <div class="input-group">
+                    <label for="prompt">What do you need help with? (Enter a prompt):</label>
+                    <textarea id="prompt" name="prompt" placeholder="Write your prompt here..."></textarea>
+                </div>
+
+                <button type="submit" class="submit-btn">Generate Study Plan</button>
+            </form>
+
+            {% if result %}
+            <div class="result">
+                <h3>Your Custom Study Plan:</h3>
+                {{ result.result | safe }}
+            </div>
+            {% endif %}
+        </section>
+        <a href="/" class="back-button">Back to Home</a>
+    </div>
+
+    <script>
+        document.querySelector('form').addEventListener('submit', function(event) {
+            const prompt = document.querySelector('#prompt').value.trim();
+            if (prompt === "") {
+                alert("Please enter a prompt!");
+                event.preventDefault();
+            }
+        });
+
+        // const form = document.getElementById('studyPlan');
+        // const submitButton = document.getElementById('submit-btn');
+
+        // form.addEventListener('submit', function(event) {
+        //     event.preventDefault(); // Prevent the default form submission
+
+        //     if (file.value !== "" || url.value !== "") {
+        //         submitButton.disabled = true;
+        //         submitButton.textContent = 'Processing...';
+        //         submitButton.style.backgroundColor = 'grey';
+
+        //         // Add query parameter to indicate submission
+        //         window.location.search = '?submitted=true';  // Add this query parameter
+        //         form.submit();  // Proceed with form submission
+        //     } else {
+        //         submitButton.textContent = 'Please upload a file or provide a URL.';
+        //         submitButton.style.backgroundColor = 'red';
+        //         setTimeout(() => {
+        //             submitButton.textContent = 'Submit';
+        //             submitButton.style.backgroundColor = '#4CAF50';
+        //         }, 2000);
+        //     }
+        // });
+    </script>
+</body>
+</html>

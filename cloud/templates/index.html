@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tutor AI</title>
+  <style>
+    /* General Styles */
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Arial', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100vh;
+      background: linear-gradient(220.55deg, #8FFF85 0%, #39A0FF 100%);
+      animation: backgroundAnimation 8s infinite alternate;
+    }
+
+    /* Background Animation */
+    @keyframes backgroundAnimation {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 100% 50%; }
+    }
+
+    /* Title Style */
+    h1 {
+      margin: 20px 0;
+      font-size: 2.5rem;
+      color: #000000;
+      text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Button Container */
+    .button-container {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      max-width: 600px;
+    }
+
+    /* Button Styles */
+    .animated-button {
+      background: linear-gradient(45deg, #6a11cb, #2575fc);
+      border: none;
+      color: white;
+      font-size: 1.2rem;
+      padding: 15px 30px;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      text-align: center;
+    }
+
+    .animated-button::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 300%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.2);
+      transform: skewX(-30deg);
+      transition: left 0.5s ease-in-out;
+    }
+
+    .animated-button:hover {
+      transform: scale(1.1);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .animated-button:hover::before {
+      left: 100%;
+    }
+
+    .animated-button span {
+      position: relative;
+      z-index: 2;
+    }
+
+    .animated-button:focus {
+      outline: none;
+    }
+
+    button {
+        display: inline-block;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    button[type="submit"] {
+        background-color: #4CAF50;
+        color: white;
+    }
+
+    button[type="submit"]:disabled {
+        background-color: grey;
+        cursor: not-allowed;
+    }
+
+    .secondary-button {
+        background-color: #007BFF;
+        color: white;
+        text-decoration: none;
+        padding: 10px 20px;
+        margin-top: 10px;
+        display: inline-block;
+    }
+
+    .secondary-button:hover {
+        background-color: #0056b3;
+    }
+
+    /* Popup Styles */
+    .popup {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .popup-content {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      max-width: 400px;
+    }
+
+    .popup-content button {
+      margin-top: 10px;
+    }
+
+  </style>
+</head>
+<body>
+
+  <h1>Tutor AI</h1>
+  <hr></hr>
+  
+  <div class="popup" id="popup">
+    <div class="popup-content">
+      <p>We use ONLY necessary cookies and track data to enhance your experience, provide personalized study plans, and enable features like uploading files with OpenAI. By continuing, you consent to our use of cookies and data processing practices in line with our privacy policy.</p>
+      <button onclick="closePopup()">Accept</button>
+      <button onclick="closePopup()">Don't store any cookies</button>
+    </div>
+  </div>    
+
+  <div class="button-container">
+    <button class="animated-button" onclick="navigateTo('/tutor-ai')"><span>General Chatbot</span></button>
+    <button class="animated-button" onclick="navigateTo('/study-plan')"><span>Study Plan</span></button>
+    <button class="animated-button" onclick="navigateTo('/quiz')"><span>Quiz</span></button>
+    <button class="animated-button" onclick="navigateTo('/summarizer')"><span>Summarizer</span></button>
+  </div>
+  <a href="/how-it-works" class="secondary-button animated-button">How It Works</a>
+
+  <script>
+    // Navigate to the desired route
+    function navigateTo(route) {
+      window.location.href = route;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const popup = document.getElementById('popup');
+
+      // Check if the user has already accepted cookies
+      const cookiesAccepted = localStorage.getItem('cookiesAccepted');
+      const urlParams = new URLSearchParams(window.location.search);
+      const submitted = urlParams.get('submitted');
+
+      if (cookiesAccepted === 'true') {
+        popup.style.display = 'none'; // Hide popup if accepted
+      } else if (submitted !== 'true') {
+        popup.style.display = 'flex'; // Show popup only if not submitted
+      }
+
+      // Function to close the popup and store acceptance
+      window.closePopup = function() {
+        popup.style.display = 'none';
+        localStorage.setItem('cookiesAccepted', 'true');
+      };
+    });
+  </script>
+</body>
+</html>
